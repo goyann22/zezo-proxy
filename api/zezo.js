@@ -1,15 +1,16 @@
-// api/zezo.js
-import fetch from "node-fetch";
+import fetch from 'node-fetch';
 
 export default async function handler(req, res) {
-  const { url } = req.query;
-  if (!url) return res.status(400).json({ error: "Missing url parameter" });
+    const targetUrl = req.query.url;
+    if (!targetUrl) return res.status(400).send("Missing URL");
 
-  try {
-    const response = await fetch(url);
-    const data = await response.text(); // ou .json() si JSON
-    res.status(200).send(data);
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
+    try {
+        const response = await fetch(targetUrl);
+        const text = await response.text();
+
+        res.setHeader("Access-Control-Allow-Origin", "*"); // ⚠️ pour autoriser CORS
+        res.status(200).send(text);
+    } catch (err) {
+        res.status(500).send("Error fetching Zezo route: " + err.message);
+    }
 }
