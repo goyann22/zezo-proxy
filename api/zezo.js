@@ -1,7 +1,9 @@
+// zezo.js (Vercel serverless function)
 const fetch = require("node-fetch");
 
 module.exports = async function handler(req, res) {
     if (req.method === "OPTIONS") {
+        // gérer préflight CORS
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
         res.setHeader("Access-Control-Allow-Headers", "*");
@@ -14,15 +16,19 @@ module.exports = async function handler(req, res) {
     try {
         const response = await fetch(targetUrl, {
             headers: {
-                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)"
+                "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64)",
+                "Accept": "text/html",
             }
         });
-        const text = await response.text();
 
+        const html = await response.text();
+
+        // Autoriser CORS pour le navigateur
         res.setHeader("Access-Control-Allow-Origin", "*");
         res.setHeader("Access-Control-Allow-Methods", "GET,OPTIONS");
         res.setHeader("Access-Control-Allow-Headers", "*");
-        res.status(200).send(text);
+
+        res.status(200).send(html);
     } catch (err) {
         res.status(500).send("Error fetching Zezo route: " + err.message);
     }
